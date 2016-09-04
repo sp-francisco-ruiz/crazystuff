@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Game.Managers;
+using System.Collections.Generic;
 
 namespace Game.Controllers
 {
@@ -25,7 +26,7 @@ namespace Game.Controllers
             }
         }
 
-        PlatformController _lastPlatformCreated;
+        List<PlatformController> _Platforms = new List<PlatformController>();
 
     	void Awake () 
         {
@@ -50,24 +51,27 @@ namespace Game.Controllers
 
         public void OnExitPlatform(GameEvents.ExitPlatformEvent e)
         {
-            Destroy(e.Platform.gameObject, 1f);
+            Destroy(_Platforms[0].gameObject, 1f);
+            _Platforms.RemoveAt(0);
             CreatePlatform();
         }
 
         void CreatePlatform()
         {
             var go = Instantiate(platformPrefab);
-            if(_lastPlatformCreated == null)
+            var controller = go.GetComponent<PlatformController>();
+            if(_Platforms.Count < 1)
             {
-                go.transform.position = Vector3.zero;
-                go.transform.rotation = Quaternion.identity;
+                controller.transform.position = Vector3.zero;
+                controller.transform.rotation = Quaternion.identity;
             }
             else
             {
-                go.transform.position = _lastPlatformCreated.end.transform.position;
-                go.transform.LookAt(go.transform.position + _lastPlatformCreated.end.transform.forward);
+                controller.transform.position = _Platforms[_Platforms.Count - 1].end.transform.position;
+                controller.transform.LookAt(go.transform.position + _Platforms[_Platforms.Count - 1].end.transform.forward);
+                controller.SetObstacles();
             }
-            _lastPlatformCreated = go.GetComponent<PlatformController>();
+            _Platforms.Add(controller);
         }
     }
 }

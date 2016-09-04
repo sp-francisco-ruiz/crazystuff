@@ -5,12 +5,19 @@ public static class GameEvents
     {
     }
 
+    public class InputEvent
+    {
+    }
+
     public class ExitPlatformEvent : GameEvent
     {
-        public PlatformController Platform;
-        public ExitPlatformEvent(PlatformController platform)
-        {
-            Platform = platform;    
-        } 
+    }
+
+    public class OnMoveRightEvent : InputEvent
+    {
+    }
+
+    public class OnMoveLeftEvent : InputEvent
+    {
     }
 }
