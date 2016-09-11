@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 949c491fe46db5049a03c14437bed3ff
-timeCreated: 1472598286
+guid: 9a9f44f1aef0bac45958541fa2dfe43e
+timeCreated: 1473604741
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,10 +9,10 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: terreno2
+    4300000: terreno004
   materials:
     importMaterials: 1
-    materialName: 1
+    materialName: 0
     materialSearch: 1
   animations:
     legacyGenerateAnimations: 4
