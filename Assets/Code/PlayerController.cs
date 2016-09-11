@@ -5,8 +5,10 @@ namespace Game.Controllers
 {
     public class PlayerController : MonoBehaviour 
     {
-        public float speed = 10f;
-        public float PlayerSpeed = 10f;
+        public static float PlayerSpeed = 0f;
+
+        public float PlayerSpeedInitial = 10f;
+        public float PlayerSpeedMultiplier = .2f;
 
         [SerializeField]
         GameObject PlayerObj;
@@ -29,6 +31,7 @@ namespace Game.Controllers
         {
             EventDispatcher.Instance.AddListener<GameEvents.OnMoveLeftEvent>(OnMoveLeft);
             EventDispatcher.Instance.AddListener<GameEvents.OnMoveRightEvent>(OnMoveRight);
+            PlayerSpeed = PlayerSpeedInitial;
         }
 
         void OnDisable()
@@ -39,12 +42,10 @@ namespace Game.Controllers
 
     	void Update () 
         {
-    	    transform.position = transform.position + transform.forward * speed * TimeManager.deltaTime;
-            if(_targetPos != null)
-            {
-                PlayerObj.transform.localPosition = Vector3.Lerp(PlayerObj.transform.localPosition, _targetPos, TimeManager.deltaTime * PlayerSpeed);
-            }
-            speed += TimeManager.deltaTime * 0.5f;
+            transform.position = transform.position + transform.forward * PlayerSpeed * TimeManager.deltaTime;
+            PlayerObj.transform.localPosition = Vector3.Lerp(PlayerObj.transform.localPosition, _targetPos, TimeManager.deltaTime * PlayerSpeed);
+
+            PlayerSpeed += TimeManager.deltaTime * PlayerSpeedMultiplier;
     	}
 
 
