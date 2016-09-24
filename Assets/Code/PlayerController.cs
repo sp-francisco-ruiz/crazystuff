@@ -24,6 +24,8 @@ namespace Game.Controllers
 
         Vector3 _targetPos;
 
+        public Animator animator;
+
         //-1 0 1 : left mid right
         int _side = 0;
 
@@ -62,6 +64,7 @@ namespace Game.Controllers
                 _targetPos = LeftObj.transform.localPosition;
                 _side = -1;
             }
+            animator.SetTrigger("left");
         }
 
         void OnMoveRight(GameEvents.OnMoveRightEvent e)
@@ -76,6 +79,7 @@ namespace Game.Controllers
                 _targetPos = RightObj.transform.localPosition;
                 _side = 1;
             }
+            animator.SetTrigger("right");
         }
 
         void OnTriggerEnter(Collider other)
