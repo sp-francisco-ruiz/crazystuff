@@ -4,11 +4,10 @@ using System.Collections.Generic;
 
 namespace Game.Controllers
 {
-    public class GameplayController : MonoBehaviour 
+    public class GameplayController : MonoBehaviour
     {
-        public GameObject platformPrefab;
-
         static GameplayController _instance;
+
         public static GameplayController Instance
         {
             get
@@ -26,17 +25,28 @@ namespace Game.Controllers
             }
         }
 
-        List<PlatformController> _Platforms = new List<PlatformController>();
+        public List<GameObject> PlatformPrefabs;
+        public List<GameObject> TurnPlatformPrefabs;
 
-    	void Awake () 
+        public List<PlatformController> _Platforms = new List<PlatformController>();
+
+
+        int _tilesToTurn = 5;
+
+        void Awake()
         {
-    	    Instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
-            for(int i = 0; i < 10; ++i)
+            for(int i = 0; i < 15; ++i)
             {
                 CreatePlatform();
             }
-    	}
+        }
+
+        void Update()
+        {
+            InputController.Instance.Update();
+        }
 
         void OnEnable()
         {
@@ -44,21 +54,31 @@ namespace Game.Controllers
             EventDispatcher.Instance.AddListener<GameEvents.ExitPlatformEvent>(OnExitPlatform);
         }
 
-    	void OnDisable () 
+        void OnDisable()
         {
             EventDispatcher.Instance.RemoveListener<GameEvents.ExitPlatformEvent>(OnExitPlatform);
-    	}
+        }
 
         public void OnExitPlatform(GameEvents.ExitPlatformEvent e)
         {
-            Destroy(_Platforms[0].gameObject, 1f);
+            Destroy(_Platforms[0].gameObject, 3f);
             _Platforms.RemoveAt(0);
             CreatePlatform();
         }
 
         void CreatePlatform()
         {
-            var go = Instantiate(platformPrefab);
+            GameObject go = null;
+            if(Random.Range(0, 100) > 70 && _tilesToTurn < 0)
+            {
+                go = Instantiate(TurnPlatformPrefabs[Random.Range(0, TurnPlatformPrefabs.Count)]);
+                _tilesToTurn = 5;
+            }
+            else
+            { 
+                go = Instantiate(PlatformPrefabs[Random.Range(0, PlatformPrefabs.Count)]);
+                --_tilesToTurn;
+            }
             var controller = go.GetComponent<PlatformController>();
             if(_Platforms.Count < 1)
             {
@@ -67,9 +87,8 @@ namespace Game.Controllers
             }
             else
             {
-                controller.transform.position = _Platforms[_Platforms.Count - 1].end.transform.position;
-                controller.transform.LookAt(go.transform.position + _Platforms[_Platforms.Count - 1].end.transform.forward);
-                controller.SetObstacles();
+                controller.transform.position = _Platforms[_Platforms.Count - 1].EndTrans.position;
+                controller.transform.LookAt(go.transform.position + _Platforms[_Platforms.Count - 1].EndTrans.forward);
             }
             _Platforms.Add(controller);
         }

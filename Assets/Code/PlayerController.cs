@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using Game.Managers;
+using System.Collections;
 
 namespace Game.Controllers
 {
     public class PlayerController : MonoBehaviour 
     {
         public static float PlayerSpeed = 0f;
+        public static float PlayerTurnSpeed = 5f;
+        public static float PlayerSlideSpeed = 20f;
 
         public float PlayerSpeedInitial = 10f;
         public float PlayerSpeedMultiplier = .2f;
@@ -22,9 +25,9 @@ namespace Game.Controllers
         [SerializeField]
         GameObject RightObj;
 
-        Vector3 _targetPos;
+        Vector3 _targetPos = Vector3.zero;
 
-        public Animator animator;
+        public Animation _animation;
 
         //-1 0 1 : left mid right
         int _side = 0;
@@ -44,14 +47,19 @@ namespace Game.Controllers
 
     	void Update () 
         {
-            transform.position = transform.position + transform.forward * PlayerSpeed * TimeManager.deltaTime;
-            PlayerObj.transform.localPosition = Vector3.Lerp(PlayerObj.transform.localPosition, _targetPos, TimeManager.deltaTime * PlayerSpeed);
+            _targetPos = Vector3.zero;
+            _targetPos.x = InputController.Instance.Axis.x * Time.deltaTime * PlayerSlideSpeed;
 
-            PlayerSpeed += TimeManager.deltaTime * PlayerSpeedMultiplier;
+            transform.position = transform.position + transform.forward * PlayerSpeed * Time.deltaTime;
+            PlayerObj.transform.localPosition += _targetPos;
+
+            _targetPos.x = PlayerObj.transform.localPosition.x;
+            _targetPos.x = Mathf.Clamp(PlayerObj.transform.localPosition.x, LeftObj.transform.localPosition.x, RightObj.transform.localPosition.x);
+            PlayerObj.transform.localPosition = _targetPos;
+
+            PlayerSpeed += Time.deltaTime * PlayerSpeedMultiplier;
     	}
-
-
-
+   
         void OnMoveLeft(GameEvents.OnMoveLeftEvent e)
         {
             if(_side == 1)
@@ -64,7 +72,7 @@ namespace Game.Controllers
                 _targetPos = LeftObj.transform.localPosition;
                 _side = -1;
             }
-            animator.SetTrigger("left");
+            //_animation.SetTrigger("left");
         }
 
         void OnMoveRight(GameEvents.OnMoveRightEvent e)
@@ -79,7 +87,7 @@ namespace Game.Controllers
                 _targetPos = RightObj.transform.localPosition;
                 _side = 1;
             }
-            animator.SetTrigger("right");
+            //_animation.SetTrigger("right");
         }
 
         void OnTriggerEnter(Collider other)
@@ -88,9 +96,22 @@ namespace Game.Controllers
             {
                 EventDispatcher.Instance.Raise(new GameEvents.ExitPlatformEvent());
             }
+            else if(other.CompareTag("turn"))
+            {
+                StartCoroutine(Turn(other.transform.forward));
+            }
             else if(other.CompareTag("obstacle"))
             {
                 Debug.Log("I Die");
+            }
+        }
+
+        IEnumerator Turn(Vector3 target)
+        {
+            while(Vector3.Dot(transform.forward, target) < 1f)
+            {
+                transform.forward = Vector3.Lerp(transform.forward, target, Time.deltaTime * PlayerTurnSpeed);
+                yield return null;
             }
         }
     }

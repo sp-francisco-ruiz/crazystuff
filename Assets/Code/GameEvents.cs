@@ -20,4 +20,12 @@ public static class GameEvents
     public class OnMoveLeftEvent : InputEvent
     {
     }
+
+    public class OnMoveUpEvent : InputEvent
+    {
+    }
+
+    public class OnMoveDownEvent : InputEvent
+    {
+    }
 }
