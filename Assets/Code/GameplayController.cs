@@ -61,7 +61,7 @@ namespace Game.Controllers
 
         public void OnExitPlatform(GameEvents.ExitPlatformEvent e)
         {
-            Destroy(_Platforms[0].gameObject, 3f);
+            _Platforms[0].PlayerLeft();
             _Platforms.RemoveAt(0);
             CreatePlatform();
         }
