@@ -53,7 +53,7 @@ public class InputController
         Vector2 direction = Vector3.zero;
 
         Axis = Input.acceleration;
-        Debug.Log(Axis);
+
         #if UNITY_EDITOR
          if(Input.GetMouseButtonDown(0))
          {

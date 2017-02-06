@@ -27,13 +27,13 @@ namespace Game.Controllers
             _animation = PlayerObj.GetComponent<Animation>();
             _rigidBody = GetComponent<Rigidbody>();
             _transform = GetComponent<Transform>();
+            PlayerSpeed = PlayerSpeedInitial;
         }
 
         void Update () 
         {
-            _targetPos = _transform.position + _transform.forward * Time.deltaTime * PlayerSpeed;
-            _targetPos.x += InputController.Instance.Axis.x * Time.deltaTime * PlayerSlideSpeed;
-
+            _targetPos = _transform.position + _transform.forward * PlayerSpeed * Time.deltaTime;
+            _targetPos.x += InputController.Instance.Axis.x * PlayerSlideSpeed * Time.deltaTime;
             _rigidBody.MovePosition(_targetPos);
 
             PlayerSpeed += Time.deltaTime * PlayerSpeedMultiplier;
@@ -43,9 +43,11 @@ namespace Game.Controllers
         {
             if(other.CompareTag("platform"))
             {
+                Debug.Log("Patata1");
                 PlatformController platform = other.GetComponent<PlatformController>();
                 if(platform != null)
                 {
+                    Debug.Log("Patata2");
                     platform.PlayerEntered();
                 }
             }

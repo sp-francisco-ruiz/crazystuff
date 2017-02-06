@@ -23,6 +23,7 @@ namespace Game.Controllers
         {
             for(int i = 0; i < Colliders.Count; ++i)
             {
+                Debug.Log("Patatisimas");
                 Colliders[i].enabled = true;
             }
             _trigger.enabled = false;
